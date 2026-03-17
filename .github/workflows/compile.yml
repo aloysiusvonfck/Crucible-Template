@@ -39,7 +39,7 @@ jobs:
 
       - name: Inject generated code
         run: |
-          echo "${{ github.event.inputs.code || github.event.client_payload.code }}" > app/src/main/java/com/nexuside/dynamic/${{ github.event.inputs.file_name || github.event.client_payload.file_name || 'GeneratedModuleContent.kt' }}
+          printf '%s' '${{ github.event.inputs.code || github.event.client_payload.code }}' > app/src/main/java/com/nexuside/dynamic/${{ github.event.inputs.file_name || github.event.client_payload.file_name || 'GeneratedModuleContent.kt' }}
 
       - name: Build APK
         run: ./gradlew assembleDebug
