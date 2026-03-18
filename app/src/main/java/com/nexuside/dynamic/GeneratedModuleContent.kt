@@ -9,22 +9,17 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun GeneratedModuleContent() {
-    var count by remember { mutableStateOf(0) }
-    
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Dynamic Module v1",
-            style = MaterialTheme.typography.headlineMedium
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { count++ }) {
-            Text("Clicked: $count times")
-        }
-    }
+var count by remember { mutableStateOf(0) }
+
+Column(
+  modifier = Modifier.fillMaxSize().padding(16.dp),
+  horizontalAlignment = Alignment.CenterHorizontally,
+  verticalArrangement = Arrangement.Center
+) {
+  Text("Dynamic Module v1")
+  Spacer(modifier = Modifier.height(16.dp))
+  Button(onClick = { count++ }) {
+    Text("Clicked: $count times")
+  }
+}
 }
