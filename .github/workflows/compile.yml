@@ -37,12 +37,12 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: Inject gen
+      - name: Inject generated code
         run: |
-          printf '%s' '${{ github.event.inputs.code || github.event.client_payload.code }}' > app/src/main/java/com/nexuside/dynamic/${{ github.event.inputs.file_name || 'GeneratedModuleContent.kt' }}
-  
-          # Preserve the package and imports, replace only the function body
-          cat > app/src/main/java/com/nexuside/dynamic/${{ github.event.inputs.file_name || 'GeneratedModuleContent.kt' }} << 'KOTLIN_EOF'
+          CODE="${{ github.event.inputs.code || github.event.client_payload.code }}"
+          FILE_NAME="${{ github.event.inputs.file_name || github.event.client_payload.file_name || 'GeneratedModuleContent.kt' }}"
+          
+          cat > app/src/main/java/com/nexuside/dynamic/$FILE_NAME << EOF
 package com.nexuside.dynamic
 
 import androidx.compose.foundation.layout.*
@@ -54,9 +54,9 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun GeneratedModuleContent() {
-${{ github.event.inputs.code || github.event.client_payload.code }}
+$CODE
 }
-KOTLIN_EOF
+EOF
 
       - name: Build APK
         run: ./gradlew assembleDebug
