@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       code:
-        description: 'Kotlin code to compile'
+        description: 'Kotlin code to inject (function body only)'
         required: true
         type: string
       file_name:
@@ -21,9 +21,6 @@ jobs:
     steps:
       - name: Checkout template
         uses: actions/checkout@v4
-        with:
-          repository: aloysiusvonfck/Crucible-Template
-          ref: main
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -34,28 +31,19 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: Inject generated code
+      - name: Inject code
         run: |
           CODE="${{ github.event.inputs.code || github.event.client_payload.code }}"
           FILE_NAME="${{ github.event.inputs.file_name || github.event.client_payload.file_name || 'GeneratedModuleContent.kt' }}"
-          FILE_PATH="app/src/main/java/com/nexuside/dynamic/$FILE_NAME"
-          
-          echo "package com.nexuside.dynamic" > "$FILE_PATH"
-          echo "" >> "$FILE_PATH"
-          echo "import androidx.compose.foundation.layout.*" >> "$FILE_PATH"
-          echo "import androidx.compose.material3.*" >> "$FILE_PATH"
-          echo "import androidx.compose.runtime.*" >> "$FILE_PATH"
-          echo "import androidx.compose.ui.Alignment" >> "$FILE_PATH"
-          echo "import androidx.compose.ui.Modifier" >> "$FILE_PATH"
-          echo "import androidx.compose.ui.unit.dp" >> "$FILE_PATH"
-          echo "" >> "$FILE_PATH"
-          echo "@Composable" >> "$FILE_PATH"
-          echo "fun GeneratedModuleContent() {" >> "$FILE_PATH"
-          echo "$CODE" >> "$FILE_PATH"
-          echo "}" >> "$FILE_PATH"
+          node inject-code.js "$CODE" "$FILE_NAME"
 
       - name: Build APK
         run: ./gradlew assembleDebug
