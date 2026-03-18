@@ -41,22 +41,21 @@ jobs:
         run: |
           CODE="${{ github.event.inputs.code || github.event.client_payload.code }}"
           FILE_NAME="${{ github.event.inputs.file_name || github.event.client_payload.file_name || 'GeneratedModuleContent.kt' }}"
+          FILE_PATH="app/src/main/java/com/nexuside/dynamic/$FILE_NAME"
           
-          cat > app/src/main/java/com/nexuside/dynamic/$FILE_NAME << EOF
-package com.nexuside.dynamic
-
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-
-@Composable
-fun GeneratedModuleContent() {
-$CODE
-}
-EOF
+          echo "package com.nexuside.dynamic" > "$FILE_PATH"
+          echo "" >> "$FILE_PATH"
+          echo "import androidx.compose.foundation.layout.*" >> "$FILE_PATH"
+          echo "import androidx.compose.material3.*" >> "$FILE_PATH"
+          echo "import androidx.compose.runtime.*" >> "$FILE_PATH"
+          echo "import androidx.compose.ui.Alignment" >> "$FILE_PATH"
+          echo "import androidx.compose.ui.Modifier" >> "$FILE_PATH"
+          echo "import androidx.compose.ui.unit.dp" >> "$FILE_PATH"
+          echo "" >> "$FILE_PATH"
+          echo "@Composable" >> "$FILE_PATH"
+          echo "fun GeneratedModuleContent() {" >> "$FILE_PATH"
+          echo "$CODE" >> "$FILE_PATH"
+          echo "}" >> "$FILE_PATH"
 
       - name: Build APK
         run: ./gradlew assembleDebug
